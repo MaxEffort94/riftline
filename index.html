@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A League of Legends player performance dashboard." />
+    <title>Riftline — League performance dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="noise"></div>
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="Riftline home">
+        <span class="brand-mark">R</span>
+        <span>RIFT<span>LINE</span></span>
+      </a>
+      <div class="topbar-meta"><span class="status-dot"></span> Riot API connected <span class="divider"></span> <span id="last-updated">Updated just now</span></div>
+      <button class="icon-button" id="theme-toggle" type="button" aria-label="Toggle theme">☼</button>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="eyebrow">PLAYER INTELLIGENCE / 01</div>
+        <h1>Know your <em>next</em> move.</h1>
+        <p class="hero-copy">Search any League of Legends player to surface their rank, champion mastery, and recent match rhythm.</p>
+        <form class="search-form" id="search-form">
+          <label class="search-field">
+            <span class="search-icon">⌕</span>
+            <input id="player-search" autocomplete="off" placeholder="Summoner name#TAG" />
+          </label>
+          <select id="region" aria-label="Region">
+            <option value="na1">NORTH AMERICA</option>
+            <option value="euw1">EUROPE WEST</option>
+            <option value="kr" selected>KOREA</option>
+            <option value="oc1">OCEANIA</option>
+            <option value="sg2">SOUTHEAST ASIA</option>
+          </select>
+          <button class="search-button" type="submit">Analyze player <span>↗</span></button>
+        </form>
+      </section>
+
+      <section class="dashboard" id="dashboard" aria-live="polite">
+        <nav class="dashboard-tabs" aria-label="Dashboard sections">
+          <button class="dashboard-tab active" data-tab="overview">Overview</button>
+          <button class="dashboard-tab" data-tab="mastery">Mastery</button>
+          <button class="dashboard-tab" data-tab="style">Play style</button>
+        </nav>
+        <div class="profile-column">
+          <div class="profile-card">
+            <div class="profile-top">
+              <div class="avatar" id="profile-avatar">F</div>
+              <div>
+                <div class="profile-name-row"><h2 id="player-name">Faker</h2><span class="region-pill" id="player-region">KR</span></div>
+                <p id="player-tag">#KR1 · T1</p>
+              </div>
+              <button class="more-button" type="button" aria-label="More player options">•••</button>
+            </div>
+            <div class="rank-row">
+              <div class="rank-emblem">✦</div>
+              <div><span class="label">SOLO / CURRENT SPLIT</span><strong id="player-rank">CHALLENGER</strong><small id="player-lp">1,284 LP <span>↑ 42 this week</span></small></div>
+            </div>
+            <div class="profile-stats">
+              <div><span>WIN RATE</span><strong id="win-rate">68.4%</strong></div>
+              <div><span>KDA</span><strong id="kda">6.8</strong></div>
+              <div><span>GAMES</span><strong id="games">342</strong></div>
+            </div>
+            <div class="mini-chart" aria-label="Win rate trend"><div class="chart-grid"></div><svg viewBox="0 0 360 74" role="img"><path d="M0 64 C20 59 25 45 44 50 S70 60 89 43 S115 44 130 34 S150 46 168 30 S192 37 212 23 S235 27 253 16 S278 26 296 11 S325 18 360 3" fill="none" stroke="currentColor" stroke-width="3" vector-effect="non-scaling-stroke"/><path d="M0 64 C20 59 25 45 44 50 S70 60 89 43 S115 44 130 34 S150 46 168 30 S192 37 212 23 S235 27 253 16 S278 26 296 11 S325 18 360 3 V74 H0Z" fill="url(#fade)" opacity=".22"/><defs><linearGradient id="fade" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#c6f36b"/><stop offset="1" stop-color="#c6f36b" stop-opacity="0"/></linearGradient></defs></svg><div class="chart-caption"><span>LAST 30 DAYS</span><span>PEAK <b>72.1%</b></span></div></div>
+          </div>
+          <aside class="top-champions">
+            <div class="section-heading compact"><div><span class="eyebrow">MASTERY / 03</span><h2>Top champions</h2></div><span class="tiny-link">ALL TIME ↗</span></div>
+            <div id="champions" class="champions"></div>
+            <div class="tip-card"><span class="tip-icon">✣</span><div><span class="eyebrow">RIFTLINE INSIGHT</span><p id="insight">You win 22% more games when playing from ahead before 15 minutes.</p></div></div>
+          </aside>
+        </div>
+
+        <div class="content-column tab-panel active" data-panel="overview">
+          <div class="analytics-card">
+            <div class="section-heading compact"><div><span class="eyebrow">PERFORMANCE / 04</span><h2>Game activity</h2></div><span class="tiny-link">LAST 10 GAMES</span></div>
+            <div class="heatmap" id="heatmap" aria-label="Activity by game phase"></div>
+            <div class="heatmap-labels"><span>0–10 MIN</span><span>10–20</span><span>20–30</span><span>30+</span></div>
+            <div class="metric-grid">
+              <div><span>KILL PARTICIPATION</span><strong id="kill-participation">—</strong></div>
+              <div><span>VISION SCORE</span><strong id="vision-score">—</strong></div>
+              <div><span>WARD SCORE</span><strong id="ward-score">—</strong></div>
+              <div><span>CS / MIN</span><strong id="cs-per-minute">—</strong></div>
+              <div><span>DAMAGE / MIN</span><strong id="damage-per-minute">—</strong></div>
+            </div>
+          </div>
+          <div class="section-heading"><div><span class="eyebrow">RECENT FORM / 02</span><h2>Match history</h2></div><div class="filters"><button class="filter active" data-filter="all">All</button><button class="filter" data-filter="wins">Wins</button><button class="filter" data-filter="losses">Losses</button></div></div>
+          <div class="matches" id="matches"></div>
+          <button class="load-more" id="load-more" type="button">Load older matches <span>↓</span></button>
+        </div>
+
+        <section class="wide-panel tab-panel" data-panel="mastery">
+          <div class="section-heading"><div><span class="eyebrow">CHAMPION MASTERY / 05</span><h2>Every champion</h2></div><span class="tiny-link">TOP 50</span></div>
+          <div id="mastery-list" class="mastery-list"></div>
+        </section>
+        <section class="wide-panel tab-panel" data-panel="style">
+          <div class="section-heading"><div><span class="eyebrow">PLAYER PROFILE / 06</span><h2>Play style</h2></div><span class="tiny-link">RECENT MATCHES</span></div>
+          <p class="panel-description">A read on where this player spends their games, based on Riot match position data.</p>
+          <div id="style-list" class="style-list"></div>
+          <div class="section-heading rank-heading"><div><span class="eyebrow">RANKED QUEUES / 07</span><h2>All ranks</h2></div></div>
+          <div id="rank-list" class="rank-list"></div>
+        </section>
+      </section>
+    </main>
+    <footer><span>RIFTLINE / PLAYER ANALYTICS</span><span>Demo data · Connect a Riot API proxy to go live</span></footer>
+    <script src="./app.js"></script>
+  </body>
+</html>
