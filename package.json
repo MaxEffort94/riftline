@@ -4,16 +4,12 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "node -e \"require('fs').mkdirSync('public',{recursive:true}); for (const f of ['index.html','styles.css','app.js']) require('fs').copyFileSync(f,'public/'+f)\""
   },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2"
   }
-  {"scripts": {
-  "start": "node server.js",
-  "build": "node -e \"require('fs').mkdirSync('public',{recursive:true}); for (const f of ['index.html','styles.css','app.js']) require('fs').copyFileSync(f,'public/'+f)\""
-  }
-   
 }
