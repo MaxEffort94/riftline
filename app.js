@@ -1,16 +1,5 @@
-let matchData = [
-  { time: "18 MIN", result: "Victory", mode: "Ranked Solo · 29:41", champ: "Azir", role: "MID", kda: "9 / 1 / 12", cs: "287 CS", win: true },
-  { time: "2 HRS", result: "Victory", mode: "Ranked Solo · 31:08", champ: "Ahri", role: "MID", kda: "8 / 2 / 15", cs: "241 CS", win: true },
-  { time: "5 HRS", result: "Defeat", mode: "Ranked Solo · 26:52", champ: "Orianna", role: "MID", kda: "3 / 6 / 7", cs: "198 CS", win: false },
-  { time: "YESTERDAY", result: "Victory", mode: "Ranked Solo · 34:12", champ: "Sylas", role: "MID", kda: "11 / 3 / 9", cs: "262 CS", win: true },
-  { time: "YESTERDAY", result: "Defeat", mode: "Ranked Solo · 28:04", champ: "LeBlanc", role: "MID", kda: "4 / 5 / 5", cs: "220 CS", win: false },
-];
-
-let championData = [
-  { name: "Azir", games: "84 games", win: "74%", points: "421k" },
-  { name: "Ahri", games: "61 games", win: "70%", points: "309k" },
-  { name: "Orianna", games: "48 games", win: "66%", points: "258k" },
-];
+let matchData = [];
+let championData = [];
 let currentSearch = null;
 let nextStart = 10;
 let loadingMore = false;
@@ -23,6 +12,18 @@ const matchesEl = document.querySelector("#matches");
 const championsEl = document.querySelector("#champions");
 const filterButtons = document.querySelectorAll(".filter");
 const savedSearchKey = "riftline:last-search";
+
+document.querySelector(".brand")?.addEventListener("click", () => {
+  localStorage.removeItem(savedSearchKey);
+});
+
+function showDashboard() {
+  document.querySelector("#welcome-panel").hidden = true;
+  document.querySelector(".dashboard-tabs").hidden = false;
+  document.querySelector(".profile-column").hidden = false;
+  document.querySelector(".content-column").hidden = false;
+  document.querySelectorAll(".wide-panel").forEach((panel) => { panel.hidden = false; });
+}
 
 function championInitials(name) {
   return name.slice(0, 2).toUpperCase();
@@ -84,14 +85,14 @@ function avatarMarkup(iconId, name, className = "player-avatar") {
 
 function renderMatches(filter = "all") {
   const visible = matchData.filter((match) => filter === "all" || (filter === "wins" ? match.win : !match.win));
-  matchesEl.innerHTML = visible.map((match) => `
+  matchesEl.innerHTML = visible.length ? visible.map((match) => `
     <article class="match ${match.win ? "" : "loss"}" data-match-id="${match.id || ""}" tabindex="0" role="button" aria-label="View details for ${match.champ} match">
       <div class="match-time">${match.time}</div>
       <div class="result ${match.win ? "win" : "loss"}">${match.result}<small>${match.mode}</small></div>
       <div class="match-champ">${championMarkup(match.champ)}<span class="champ-name">${match.champ}<small>${match.role}</small></span></div>
       <div class="kda">${match.kda}<br><b>${match.cs}</b></div>
     </article>
-  `).join("");
+  `).join("") : `<p class="empty-state match-empty">${currentSearch ? "No recent matches found for this player." : "Search a player to load recent matches."}</p>`;
   matchesEl.querySelectorAll(".match").forEach((row) => {
     row.addEventListener("click", () => openMatchDetails(row.dataset.matchId, row));
     row.addEventListener("keydown", (event) => {
@@ -104,13 +105,13 @@ function renderMatches(filter = "all") {
 }
 
 function renderChampions() {
-  championsEl.innerHTML = championData.map((champion) => `
+  championsEl.innerHTML = championData.length ? championData.map((champion) => `
     <article class="champion">
       ${championMarkup(champion.name)}
       <div class="champion-name"><strong>${champion.name}</strong><span>${champion.games} · ${champion.points} mastery</span></div>
       <div class="champion-stat">${champion.win}<small>WIN RATE</small></div>
     </article>
-  `).join("");
+  `).join("") : `<p class="empty-state">Search a player to load champion mastery.</p>`;
 }
 
 function formatDuration(seconds) {
@@ -182,6 +183,7 @@ function applyLiveData(data) {
   loadMore.textContent = data.hasMoreMatches ? "Load older matches ↓" : "No older matches available";
   renderMatches();
   renderChampions();
+  document.querySelector("#mini-chart").hidden = false;
 }
 
 function renderMastery(champions) {
@@ -330,6 +332,15 @@ document.querySelector("#search-form").addEventListener("submit", async (event) 
   }
 
   const data = await response.json().catch(() => ({}));
+  if (!data.account || !data.account.gameName || !data.account.puuid) {
+    localStorage.removeItem(savedSearchKey);
+    const message = data.error
+      || (data.message === "Hello, world!"
+        ? "The Cloudflare API function is still the Hello World test. Deploy the Riot API function at /api/player."
+        : "The Riot API endpoint returned an incomplete player response. Configure the Cloudflare API function and RIOT_API_KEY.");
+    alert(message);
+    return;
+  }
   if (!response.ok) {
     const message = response.status === 403
       ? `${data.error || "Riot refused this request."}${data.stage ? ` Failed during: ${data.stage}.` : ""}`
@@ -366,6 +377,7 @@ document.querySelector("#search-form").addEventListener("submit", async (event) 
   document.querySelector("#player-region").textContent = region.toUpperCase();
   document.querySelector("#profile-avatar").innerHTML = avatarMarkup(data.summoner.profileIconId, data.account.gameName);
   currentSearch = { region, gameName, tagLine, puuid: data.account.puuid };
+  showDashboard();
   rawMatches = data.matches || [];
   applyLiveData(data);
   document.querySelector("footer span:last-child").textContent = "Live Riot API data";
@@ -384,9 +396,16 @@ document.querySelector("#theme-toggle").addEventListener("click", () => {
 renderMatches();
 renderChampions();
 
+const homeNavigation = new URLSearchParams(window.location.search).has("home");
+if (homeNavigation) {
+  localStorage.removeItem(savedSearchKey);
+  document.querySelector("#player-search").value = "";
+  window.history.replaceState({}, "", window.location.pathname);
+}
+
 let savedSearch = null;
 try {
-  savedSearch = JSON.parse(localStorage.getItem(savedSearchKey) || "null");
+  savedSearch = homeNavigation ? null : JSON.parse(localStorage.getItem(savedSearchKey) || "null");
 } catch {
   localStorage.removeItem(savedSearchKey);
 }
