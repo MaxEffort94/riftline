@@ -77,7 +77,7 @@ export async function onRequest(context) {
   }
   if (context.request.method !== "GET") return json({ error: "Method not allowed" }, 405);
 
-  const apiKey = context.env.RIOT_API_KEY;
+  const apiKey = context.env.RIOT_API_KEY?.trim();
   if (!apiKey) return json({ error: "RIOT_API_KEY is not configured." }, 500);
 
   const { region, gameName, tagLine } = context.params;
