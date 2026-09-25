@@ -13,7 +13,7 @@
   <body>
     <div class="noise"></div>
     <header class="topbar">
-      <a class="brand" href="./index.html" aria-label="Riftline home">
+      <a class="brand" href="./index.html?home=1" aria-label="Riftline home">
         <span class="brand-mark">R</span>
         <span>RIFT<span>LINE</span></span>
       </a>
@@ -43,40 +43,52 @@
       </section>
 
       <section class="dashboard" id="dashboard" aria-live="polite">
-        <nav class="dashboard-tabs" aria-label="Dashboard sections">
+        <section class="welcome-panel" id="welcome-panel">
+          <div class="section-heading compact"><div><span class="eyebrow">LATEST FROM THE RIFT / 01</span><h2>Patch notes</h2></div><span class="tiny-link">RIOT GAMES ↗</span></div>
+          <div class="patch-card">
+            <div class="patch-mark">↗</div>
+            <div class="patch-copy">
+              <span class="patch-label">OFFICIAL LEAGUE OF LEGENDS UPDATES</span>
+              <h3>Read the latest patch notes</h3>
+              <p>Catch up on champion changes, item updates, system adjustments, and balance changes before you search a player.</p>
+              <a href="https://www.leagueoflegends.com/en-us/news/tags/patch-notes/" target="_blank" rel="noreferrer">Open latest patch notes <span>↗</span></a>
+            </div>
+          </div>
+        </section>
+        <nav class="dashboard-tabs" aria-label="Dashboard sections" hidden>
           <button class="dashboard-tab active" data-tab="overview">Overview</button>
           <button class="dashboard-tab" data-tab="mastery">Mastery</button>
           <button class="dashboard-tab" data-tab="style">Play style</button>
         </nav>
-        <div class="profile-column">
+        <div class="profile-column" hidden>
           <div class="profile-card">
             <div class="profile-top">
-              <div class="avatar" id="profile-avatar">F</div>
+              <div class="avatar" id="profile-avatar"></div>
               <div>
-                <div class="profile-name-row"><h2 id="player-name">Faker</h2><span class="region-pill" id="player-region">KR</span></div>
-                <p id="player-tag">#KR1 · T1</p>
+                <div class="profile-name-row"><h2 id="player-name">Search a player</h2><span class="region-pill" id="player-region">—</span></div>
+                <p id="player-tag">Enter a Riot ID above</p>
               </div>
               <button class="more-button" type="button" aria-label="More player options">•••</button>
             </div>
             <div class="rank-row">
               <div class="rank-emblem">✦</div>
-              <div><span class="label">SOLO / CURRENT SPLIT</span><strong id="player-rank">CHALLENGER</strong><small id="player-lp">1,284 LP <span>↑ 42 this week</span></small></div>
+              <div><span class="label">SOLO / CURRENT SPLIT</span><strong id="player-rank">—</strong><small id="player-lp">Search to load rank</small></div>
             </div>
             <div class="profile-stats">
-              <div><span>WIN RATE</span><strong id="win-rate">68.4%</strong></div>
-              <div><span>KDA</span><strong id="kda">6.8</strong></div>
-              <div><span>GAMES</span><strong id="games">342</strong></div>
+              <div><span>WIN RATE</span><strong id="win-rate">—</strong></div>
+              <div><span>KDA</span><strong id="kda">—</strong></div>
+              <div><span>GAMES</span><strong id="games">—</strong></div>
             </div>
-            <div class="mini-chart" aria-label="Win rate trend"><div class="chart-grid"></div><svg viewBox="0 0 360 74" role="img"><path d="M0 64 C20 59 25 45 44 50 S70 60 89 43 S115 44 130 34 S150 46 168 30 S192 37 212 23 S235 27 253 16 S278 26 296 11 S325 18 360 3" fill="none" stroke="currentColor" stroke-width="3" vector-effect="non-scaling-stroke"/><path d="M0 64 C20 59 25 45 44 50 S70 60 89 43 S115 44 130 34 S150 46 168 30 S192 37 212 23 S235 27 253 16 S278 26 296 11 S325 18 360 3 V74 H0Z" fill="url(#fade)" opacity=".22"/><defs><linearGradient id="fade" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#c6f36b"/><stop offset="1" stop-color="#c6f36b" stop-opacity="0"/></linearGradient></defs></svg><div class="chart-caption"><span>LAST 30 DAYS</span><span>PEAK <b>72.1%</b></span></div></div>
+            <div class="mini-chart" id="mini-chart" aria-label="Win rate trend" hidden><div class="chart-grid"></div><svg viewBox="0 0 360 74" role="img"><path d="M0 64 C20 59 25 45 44 50 S70 60 89 43 S115 44 130 34 S150 46 168 30 S192 37 212 23 S235 27 253 16 S278 26 296 11 S325 18 360 3" fill="none" stroke="currentColor" stroke-width="3" vector-effect="non-scaling-stroke"/><path d="M0 64 C20 59 25 45 44 50 S70 60 89 43 S115 44 130 34 S150 46 168 30 S192 37 212 23 S235 27 253 16 S278 26 296 11 S325 18 360 3 V74 H0Z" fill="url(#fade)" opacity=".22"/><defs><linearGradient id="fade" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#c6f36b"/><stop offset="1" stop-color="#c6f36b" stop-opacity="0"/></linearGradient></defs></svg><div class="chart-caption"><span>LAST 30 DAYS</span><span>PEAK <b>—</b></span></div></div>
           </div>
           <aside class="top-champions">
             <div class="section-heading compact"><div><span class="eyebrow">MASTERY / 03</span><h2>Top champions</h2></div><span class="tiny-link">ALL TIME ↗</span></div>
             <div id="champions" class="champions"></div>
-            <div class="tip-card"><span class="tip-icon">✣</span><div><span class="eyebrow">RIFTLINE INSIGHT</span><p id="insight">You win 22% more games when playing from ahead before 15 minutes.</p></div></div>
+            <div class="tip-card"><span class="tip-icon">✣</span><div><span class="eyebrow">RIFTLINE INSIGHT</span><p id="insight">Search a player to generate match insights.</p></div></div>
           </aside>
         </div>
 
-        <div class="content-column tab-panel active" data-panel="overview">
+        <div class="content-column tab-panel active" data-panel="overview" hidden>
           <div class="analytics-card">
             <div class="section-heading compact"><div><span class="eyebrow">PERFORMANCE / 04</span><h2>Game activity</h2></div><span class="tiny-link">LAST 10 GAMES</span></div>
             <div class="heatmap" id="heatmap" aria-label="Activity by game phase"></div>
@@ -94,11 +106,11 @@
           <button class="load-more" id="load-more" type="button">Load older matches <span>↓</span></button>
         </div>
 
-        <section class="wide-panel tab-panel" data-panel="mastery">
+        <section class="wide-panel tab-panel" data-panel="mastery" hidden>
           <div class="section-heading"><div><span class="eyebrow">CHAMPION MASTERY / 05</span><h2>Every champion</h2></div><span class="tiny-link">TOP 50</span></div>
           <div id="mastery-list" class="mastery-list"></div>
         </section>
-        <section class="wide-panel tab-panel" data-panel="style">
+        <section class="wide-panel tab-panel" data-panel="style" hidden>
           <div class="section-heading"><div><span class="eyebrow">PLAYER PROFILE / 06</span><h2>Play style</h2></div><span class="tiny-link">RECENT MATCHES</span></div>
           <p class="panel-description">A read on where this player spends their games, based on Riot match position data.</p>
           <div id="style-list" class="style-list"></div>
@@ -107,7 +119,7 @@
         </section>
       </section>
     </main>
-    <footer><span>RIFTLINE / PLAYER ANALYTICS</span><span>Demo data · Connect a Riot API proxy to go live</span></footer>
+    <footer><span>RIFTLINE / PLAYER ANALYTICS</span><span>Search a player to get started</span></footer>
     <script src="./app.js"></script>
   </body>
 </html>
